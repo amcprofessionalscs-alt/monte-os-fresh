@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
   const [habits, setHabits] = useState([
@@ -8,7 +8,7 @@ export default function Home() {
     { id: 3, name: 'Monte', reps: 65, target: 100, color: '#06b6d4' }
   ]);
 
-  const handleAddRep = (id) => {
+  const handleAddRep = (id: number) => {
     setHabits(
       habits.map(h =>
         h.id === id && h.reps < h.target
