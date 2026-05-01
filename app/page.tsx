@@ -21,7 +21,10 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #1e293b, #000)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', padding: '20px' }}>
       <div style={{ maxWidth: '500px', width: '100%' }}>
-        <h1 style={{ textAlign: 'center', fontSize: '48px', marginBottom: '40px' }}>⚡ Monte OS</h1>
+       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+  <h1 style={{ fontSize: '48px', margin: 0 }}>⚡ Monte OS</h1>
+  <a href="/ignition" style={{ padding: '8px 16px', background: '#fbbf24', color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'none' }}>📝 Ignition</a>
+</div>
         {habits.map(habit => {
           const progress = Math.round((habit.reps / habit.target) * 100);
           return (
