@@ -1,6 +1,7 @@
 ﻿'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 export default function IgnitionPage() {
   const [energy, setEnergy] = useState(5);
@@ -8,10 +9,21 @@ export default function IgnitionPage() {
   const [mood, setMood] = useState('neutral');
   const [goal, setGoal] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log({ energy, focus, mood, goal, timestamp: new Date() });
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await supabase.from('ignitions').insert({
+        energy,
+        focus,
+        mood,
+        goal
+      });
+    } catch (e) {
+      console.log('Error saving:', e);
+    }
     setSubmitted(true);
     setTimeout(() => router.push('/'), 2000);
   };
@@ -92,9 +104,10 @@ export default function IgnitionPage() {
 
         <button
           onClick={handleSubmit}
+          disabled={loading}
           style={{ width: '100%', padding: '14px', background: '#fbbf24', color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '16px' }}
         >
-          🚀 Ignite
+          {loading ? '🔄 Saving...' : '🚀 Ignite'}
         </button>
       </div>
     </div>
