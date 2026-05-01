@@ -1,45 +1,83 @@
 ﻿'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
-export default function Home() {
-  const [habits, setHabits] = useState([
-    { id: 1, name: 'AMC', reps: 47, target: 100, color: '#fbbf24' },
-    { id: 2, name: 'OnlyFans', reps: 18, target: 100, color: '#ec4899' },
-    { id: 3, name: 'Monte', reps: 65, target: 100, color: '#06b6d4' }
-  ]);
+export default function IgnitionPage() {
+  const [energy, setEnergy] = useState(5);
+  const [focus, setFocus] = useState(5);
+  const [mood, setMood] = useState('neutral');
+  const [goal, setGoal] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleAddRep = (id: number) => {
-    setHabits(
-      habits.map(h =>
-        h.id === id && h.reps < h.target
-          ? { ...h, reps: h.reps + 1 }
-          : h
-      )
-    );
+  const handleSubmit = async () => {
+    if (!goal.trim()) return alert('Add your goal for today.');
+    setLoading(true);
+    try {
+      const { error } = await supabase.from('ignitions').insert({
+        energy,
+        focus,
+        mood,
+        goal
+      });
+      if (error) throw error;
+      setSubmitted(true);
+      setTimeout(() => router.push('/'), 2000);
+    } catch (e) {
+      console.error('Error saving:', e);
+      alert('Failed to save. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (submitted) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #1e293b, #000)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', padding: '20px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>⚡ Ignition Set</h1>
+          <p style={{ fontSize: '18px', color: '#9ca3af' }}>Ready to execute.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #1e293b, #000)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', padding: '20px' }}>
-      <div style={{ maxWidth: '500px', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '48px', margin: 0 }}>⚡ Monte OS</h1>
-          <a href="/ignition" style={{ padding: '8px 16px', background: '#fbbf24', color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'none' }}>📝 Ignition</a>
+      <div style={{ maxWidth: '500px', width: '100%', background: '#1f2937', padding: '30px', borderRadius: '12px' }}>
+        <h1 style={{ textAlign: 'center', fontSize: '36px', marginBottom: '30px' }}>⚡ Daily Ignition</h1>
+
+        <div style={{ marginBottom: '25px' }}>
+          <label style={{ display: 'block', marginBottom: '12px', fontWeight: 'bold', color: '#fbbf24' }}>Energy Level: {energy}/10</label>
+          <input type="range" min="1" max="10" value={energy} onChange={(e) => setEnergy(Number(e.target.value))} style={{ width: '100%', cursor: 'pointer' }} />
         </div>
-        {habits.map(habit => {
-          const progress = Math.round((habit.reps / habit.target) * 100);
-          return (
-            <div key={habit.id} style={{ background: '#1f2937', padding: '20px', borderRadius: '12px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <p style={{ color: habit.color, fontWeight: 'bold', margin: 0 }}>{habit.name}</p>
-                <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0 }}>{habit.reps} / {habit.target}</p>
-              </div>
-              <div style={{ background: '#374151', height: '8px', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-                <div style={{ background: habit.color, height: '100%', width: progress + '%', transition: 'width 0.5s ease' }}></div>
-              </div>
-              <button onClick={() => handleAddRep(habit.id)} style={{ width: '100%', padding: '12px', background: habit.color, color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '16px' }}>⚡ +1 Rep ({progress}%)</button>
-            </div>
-          );
-        })}
+
+        <div style={{ marginBottom: '25px' }}>
+          <label style={{ display: 'block', marginBottom: '12px', fontWeight: 'bold', color: '#06b6d4' }}>Focus Level: {focus}/10</label>
+          <input type="range" min="1" max="10" value={focus} onChange={(e) => setFocus(Number(e.target.value))} style={{ width: '100%', cursor: 'pointer' }} />
+        </div>
+
+        <div style={{ marginBottom: '25px' }}>
+          <label style={{ display: 'block', marginBottom: '12px', fontWeight: 'bold', color: '#ec4899' }}>Mood</label>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-around' }}>
+            {['fired', 'neutral', 'tired'].map(m => (
+              <button key={m} onClick={() => setMood(m)} style={{ padding: '12px 16px', background: mood === m ? '#fbbf24' : '#374151', color: mood === m ? '#000' : '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textTransform: 'capitalize' }}>
+                {m}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '25px' }}>
+          <label style={{ display: 'block', marginBottom: '12px', fontWeight: 'bold', color: '#06b6d4' }}>Today's Goal</label>
+          <textarea placeholder="What's the 1 thing you need to execute today?" value={goal} onChange={(e) => setGoal(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '6px', border: 'none', background: '#374151', color: 'white', fontFamily: 'inherit', fontSize: '14px', minHeight: '100px', resize: 'none' }} />
+        </div>
+
+        <button onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: '14px', background: '#fbbf24', color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '16px' }}>
+          {loading ? '🔄 Saving...' : '🚀 Ignite'}
+        </button>
       </div>
     </div>
   );

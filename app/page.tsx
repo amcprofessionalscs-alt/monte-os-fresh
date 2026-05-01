@@ -9,13 +9,7 @@ export default function Home() {
   ]);
 
   const handleAddRep = (id: number) => {
-    setHabits(
-      habits.map(h =>
-        h.id === id && h.reps < h.target
-          ? { ...h, reps: h.reps + 1 }
-          : h
-      )
-    );
+    setHabits(habits.map(h => h.id === id && h.reps < h.target ? { ...h, reps: h.reps + 1 } : h));
   };
 
   return (
@@ -23,7 +17,7 @@ export default function Home() {
       <div style={{ maxWidth: '500px', width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <h1 style={{ fontSize: '48px', margin: 0 }}>⚡ Monte OS</h1>
-          <a href="/ignition" style={{ padding: '8px 16px', background: '#fbbf24', color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'none' }}>📝 Ignition</a>
+          <a href="/ignition" style={{ padding: '8px 16px', background: '#fbbf24', color: '#000', borderRadius: '6px', fontWeight: 'bold', fontSize: '14px', textDecoration: 'none' }}>📝 Ignition</a>
         </div>
         {habits.map(habit => {
           const progress = Math.round((habit.reps / habit.target) * 100);
