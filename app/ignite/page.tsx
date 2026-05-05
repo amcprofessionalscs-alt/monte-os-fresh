@@ -1,5 +1,4 @@
 ﻿'use client';
-// v2 - fresh deploy
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
