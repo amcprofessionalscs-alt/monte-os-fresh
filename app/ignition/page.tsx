@@ -12,22 +12,26 @@ export default function IgnitionPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async () => {
+ const handleSubmit = async () => {
     if (!goal.trim()) return alert('Add your goal for today.');
     setLoading(true);
+    console.log('URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'exists' : 'MISSING');
     try {
-      const { error } = await supabase.from('ignitions').insert({
+      const { data, error } = await supabase.from('ignitions').insert({
         energy,
         focus,
         mood,
         goal
-      });
+      }).select();
+      console.log('Insert result:', data);
+      console.log('Insert error:', error);
       if (error) throw error;
       setSubmitted(true);
       setTimeout(() => router.push('/'), 2000);
     } catch (e) {
       console.error('Error saving:', e);
-      alert('Failed to save. Check your connection and try again.');
+      alert('Failed to save: ' + JSON.stringify(e));
     } finally {
       setLoading(false);
     }
