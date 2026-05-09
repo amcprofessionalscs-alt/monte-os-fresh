@@ -22,10 +22,13 @@ export default function Home() {
 
   useEffect(() => {
     const fetchHabits = async () => {
+      console.log('Fetching habits...');
       const { data, error } = await supabase
         .from('habits')
         .select('*')
         .order('id');
+      console.log('Habits data:', data);
+      console.log('Habits error:', error);
       if (!error && data) setHabits(data);
       setLoading(false);
     };
@@ -37,7 +40,6 @@ export default function Home() {
     if (!habit || habit.current_reps >= habit.target_reps) return;
 
     const newReps = habit.current_reps + 1;
-
     setHabits(habits.map(h => h.id === id ? { ...h, current_reps: newReps } : h));
 
     const { data, error } = await supabase
@@ -45,7 +47,7 @@ export default function Home() {
       .update({ current_reps: newReps, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select();
-    
+
     console.log('Update result:', data);
     console.log('Update error:', error);
   };
