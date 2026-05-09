@@ -40,10 +40,14 @@ export default function Home() {
 
     setHabits(habits.map(h => h.id === id ? { ...h, current_reps: newReps } : h));
 
-    await supabase
+    const { data, error } = await supabase
       .from('habits')
       .update({ current_reps: newReps, updated_at: new Date().toISOString() })
-      .eq('id', id);
+      .eq('id', id)
+      .select();
+    
+    console.log('Update result:', data);
+    console.log('Update error:', error);
   };
 
   if (loading) {
