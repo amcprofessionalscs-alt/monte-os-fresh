@@ -1,90 +1,16 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-
-type Habit = {
-  id: number;
-  name: string;
-  current_reps: number;
-  target_reps: number;
-  category: string;
-};
-
-const COLORS: Record<string, string> = {
-  AMC: '#fbbf24',
-  OnlyFans: '#ec4899',
-  Monte: '#06b6d4',
-};
-
-export default function Home() {
-  const [habits, setHabits] = useState<Habit[]>([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.push('/login');
-        return;
-      }
-      const { data, error } = await supabase.from('habits').select('*').order('id');
-      if (!error && data) setHabits(data);
-      setLoading(false);
-    };
-    init();
-  }, [router]);
-
-  const handleAddRep = async (id: number) => {
-    const habit = habits.find(h => h.id === id);
-    if (!habit || habit.current_reps >= habit.target_reps) return;
-    const newReps = habit.current_reps + 1;
-    setHabits(habits.map(h => h.id === id ? { ...h, current_reps: newReps } : h));
-    await supabase.from('habits').update({ current_reps: newReps, updated_at: new Date().toISOString() }).eq('id', id);
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/login');
-  };
-
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #1e293b, #000)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-        <p style={{ fontSize: '24px' }}>Loading...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #1e293b, #000)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', padding: '20px' }}>
-      <div style={{ maxWidth: '500px', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h1 style={{ fontSize: '48px', margin: 0 }}>Monte OS</h1>
-          <button onClick={handleSignOut} style={{ padding: '8px 16px', background: '#374151', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}>Sign Out</button>
-        </div>
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '40px' }}>
-          <a href="/ignite" style={{ flex: 1, padding: '10px', background: '#fbbf24', color: '#000', borderRadius: '6px', fontWeight: 'bold', fontSize: '14px', textDecoration: 'none', textAlign: 'center' }}>Daily Ignition</a>
-          <a href="/history" style={{ flex: 1, padding: '10px', background: '#1f2937', color: '#fff', borderRadius: '6px', fontWeight: 'bold', fontSize: '14px', textDecoration: 'none', textAlign: 'center', border: '1px solid #374151' }}>Ignition Log</a>
-        </div>
-        {habits.map(habit => {
-          const color = COLORS[habit.name] || '#ffffff';
-          const progress = Math.round((habit.current_reps / habit.target_reps) * 100);
-          return (
-            <div key={habit.id} style={{ background: '#1f2937', padding: '20px', borderRadius: '12px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <p style={{ color, fontWeight: 'bold', margin: 0 }}>{habit.name}</p>
-                <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0 }}>{habit.current_reps} / {habit.target_reps}</p>
-              </div>
-              <div style={{ background: '#374151', height: '8px', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-                <div style={{ background: color, height: '100%', width: progress + '%', transition: 'width 0.5s ease' }}></div>
-              </div>
-              <button onClick={() => handleAddRep(habit.id)} style={{ width: '100%', padding: '12px', background: color, color: '#000', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '16px' }}>+1 Rep ({progress}%)</button>
-            </div>
-          );
-        })}
-      </div>
+import{useState,useEffect}from'react';
+import{useRouter}from'next/navigation';
+import{supabase}from'@/lib/supabase';
+type Habit={id:number;name:string;current_reps:number;target_reps:number;category:string;};
+const COLORS:Record<string,string>={AMC:'#fbbf24',OnlyFans:'#ec4899',Monte:'#06b6d4'};
+export default function Home(){const[habits,setHabits]=useState<Habit[]>([]);const[loading,setLoading]=useState(true);const[greeting,setGreeting]=useState('');const router=useRouter();
+useEffect(()=>{const hour=new Date().getHours();if(hour<12)setGreeting('Good morning');else if(hour<17)setGreeting('Good afternoon');else setGreeting('Good evening');const init=async()=>{const{data:{session}}=await supabase.auth.getSession();if(!session){router.push('/login');return;}const{data,error}=await supabase.from('habits').select('*').order('id');if(!error&&data)setHabits(data);setLoading(false);};init();},[router]);
+const handleAddRep=async(id:number)=>{const habit=habits.find(h=>h.id===id);if(!habit||habit.current_reps>=habit.target_reps)return;const newReps=habit.current_reps+1;setHabits(habits.map(h=>h.id===id?{...h,current_reps:newReps}:h));await supabase.from('habits').update({current_reps:newReps,updated_at:new Date().toISOString()}).eq('id',id);};
+const handleSignOut=async()=>{await supabase.auth.signOut();router.push('/login');};
+const today=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+if(loading)return(<div style={{minHeight:'100vh',background:'#000',display:'flex',alignItems:'center',justifyContent:'center'}}><style>{'@keyframes spin{to{transform:rotate(360deg)}}'}</style><div style={{width:'48px',height:'48px',border:'2px solid rgba(251,191,36,0.3)',borderTopColor:'#fbbf24',borderRadius:'50%',animation:'spin 1s linear infinite'}}/></div>);
+return(<div style={{minHeight:'100vh',background:'#000',color:'white',padding:'24px 20px'}}><link href='https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap' rel='stylesheet'/><style>{''}</style><div style={{maxWidth:'520px',margin:'0 auto'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'40px',paddingTop:'8px'}}><div><p style={{fontFamily:'Syne,sans-serif',fontSize:'13px',fontWeight:'700',color:'#fbbf24',letterSpacing:'0.08em',margin:'0 0 6px'}}>NEXT STEP OS</p><h1 style={{fontFamily:'Syne,sans-serif',fontSize:'28px',fontWeight:'800',margin:'0 0 4px',color:'#fff'}}>{greeting}, Demonte</h1><p style={{fontFamily:'DM Mono,monospace',fontSize:'12px',color:'#4b5563',margin:0}}>{today}</p></div><button onClick={handleSignOut} style={{padding:'8px 14px',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'8px',color:'#6b7280',fontSize:'12px',cursor:'pointer'}}>sign out</button></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px',marginBottom:'32px'}}><a href='/ignite' style={{padding:'14px',background:'#fbbf24',color:'#000',borderRadius:'12px',fontWeight:'700',fontSize:'13px',textDecoration:'none',display:'block',textAlign:'center'}}>Daily Ignition</a><a href='/history' style={{padding:'14px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'#9ca3af',borderRadius:'12px',fontWeight:'600',fontSize:'13px',textDecoration:'none',display:'block',textAlign:'center'}}>Ignition Log</a></div><p style={{fontFamily:'DM Mono,monospace',fontSize:'11px',color:'#374151',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:'16px'}}>Law of 100 - Rep Tracker</p>{habits.map((habit)=>{const color=COLORS[habit.name]||'#ffffff';const progress=Math.round((habit.current_reps/habit.target_reps)*100);return(<div key={habit.id} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:'16px',padding:'20px',marginBottom:'12px'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'14px'}}><p style={{fontFamily:'Syne,sans-serif',fontWeight:'700',fontSize:'15px',margin:0,color:'#fff'}}>{habit.name}</p><p style={{fontFamily:'DM Mono,monospace',fontSize:'20px',margin:0,color}}>{habit.current_reps}<span style={{fontSize:'12px',color:'#374151'}}> / {habit.target_reps}</span></p></div><div style={{background:'rgba(255,255,255,0.06)',height:'4px',borderRadius:'2px',overflow:'hidden',marginBottom:'14px'}}><div style={{background:color,height:'100%',width:progress+'%',transition:'width 0.6s ease',borderRadius:'2px'}}/></div><button onClick={()=>handleAddRep(habit.id)} style={{width:'100%',padding:'11px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'10px',color,fontWeight:'700',cursor:'pointer',fontSize:'13px'}}>+ REP {progress}pct</button></div>);})}</div>
     </div>
   );
 }
