@@ -22,66 +22,83 @@ const FONT_MONO = 'var(--font-dm-mono), DM Mono, monospace';
 
 const STYLES = `
   @keyframes drift1 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    33%      { transform: translate(30px,-20px) scale(1.05); }
-    66%      { transform: translate(-10px,15px) scale(0.97); }
+    0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.05)} 66%{transform:translate(-10px,15px) scale(0.97)}
   }
   @keyframes drift2 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    33%      { transform: translate(-20px,30px) scale(1.03); }
-    66%      { transform: translate(25px,-10px) scale(0.98); }
+    0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-20px,30px) scale(1.03)} 66%{transform:translate(25px,-10px) scale(0.98)}
   }
   @keyframes drift3 {
-    0%,100% { transform: translate(0,0); }
-    50%      { transform: translate(15px,25px); }
+    0%,100%{transform:translate(0,0)} 50%{transform:translate(15px,25px)}
   }
   @keyframes nsPulse {
-    0%,100% { opacity: 0.4; transform: scale(1); }
-    50%      { opacity: 1; transform: scale(1.08); }
+    0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)}
   }
   @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)}
   }
   @keyframes shimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position: 200% center; }
+    0%{background-position:-200% center} 100%{background-position:200% center}
   }
 
-  /* Grain texture */
   .grain {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 256px 256px;
   }
 
-  /* Glass card blur — vendor prefix handled here */
   .card-glass {
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
 
-  /* Habit cards */
-  .habit-card { opacity: 0; animation: fadeSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
-  .habit-card:nth-child(1) { animation-delay: 0.12s; }
-  .habit-card:nth-child(2) { animation-delay: 0.26s; }
-  .habit-card:nth-child(3) { animation-delay: 0.40s; }
+  .habit-card { opacity:0; animation:fadeSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
+  .habit-card:nth-child(1) { animation-delay:0.12s; }
+  .habit-card:nth-child(2) { animation-delay:0.26s; }
+  .habit-card:nth-child(3) { animation-delay:0.40s; }
 
-  /* Rep button */
-  .rep-btn { transition: all 0.2s cubic-bezier(0.16,1,0.3,1); }
-  .rep-btn:hover  { transform: translateY(-2px); filter: brightness(1.18); }
-  .rep-btn:active { transform: scale(0.97); }
+  /* Rep button — 48px min touch target */
+  .rep-btn {
+    min-height: 48px;
+    transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rep-btn:active { transform:scale(0.97); filter:brightness(0.9); }
 
-  /* IGNITE button shimmer */
+  /* IGNITE shimmer button */
   .ignite-link {
     display: block;
-    background: linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706);
+    background: linear-gradient(90deg,#d97706,#fbbf24,#fef9ec,#fbbf24,#d97706);
     background-size: 300% auto;
     animation: shimmer 3.2s linear infinite;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .ignite-link:hover  { transform: translateY(-3px); box-shadow: 0 20px 56px rgba(251,191,36,0.55) !important; }
-  .ignite-link:active { transform: scale(0.98); }
+  .ignite-link:active { opacity:0.88; }
+
+  /* Sticky footer — fades content out behind it */
+  .sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding-top: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, rgba(10,13,26,1) 0%, rgba(10,13,26,0.96) 55%, transparent 100%);
+  }
+
+  /* Sign-out — generous tap area */
+  .signout-btn {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
 `;
 
 export default function Home() {
@@ -106,21 +123,18 @@ export default function Home() {
       if (!error && data) {
         setHabits(data);
 
-        // Seed display counts at zero so count-up starts from 0
         const zeros: Record<number, number> = {};
         data.forEach(h => { zeros[h.id] = 0; });
         setDisplayCounts(zeros);
 
-        // Progress bars slide in slightly after cards
         setTimeout(() => setProgressReady(true), 220);
 
-        // Count-up: eased rAF loop, starts 150 ms after mount
         const DURATION = 1200;
         let startTime: number | null = null;
         const step = (now: number) => {
           if (startTime === null) startTime = now;
           const t = Math.min((now - startTime) / DURATION, 1);
-          const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+          const eased = 1 - Math.pow(1 - t, 3);
           const updated: Record<number, number> = {};
           data.forEach(h => { updated[h.id] = Math.round(h.current_reps * eased); });
           setDisplayCounts(updated);
@@ -150,7 +164,7 @@ export default function Home() {
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  /* ── Loading screen ─────────────────────────────────────────── */
+  /* ── Loading ── */
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#0a0a0f 0%,#0f0a1a 50%,#0a0f1a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -162,44 +176,45 @@ export default function Home() {
     );
   }
 
-  /* ── Main render ────────────────────────────────────────────── */
+  /* ── Main ── */
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#0a0a0f 0%,#0d0a18 40%,#0a0d1a 100%)', color: 'white', position: 'relative', overflow: 'hidden' }}>
       <style>{STYLES}</style>
 
-      {/* Grain noise overlay */}
+      {/* Grain */}
       <div className="grain" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.045, pointerEvents: 'none', zIndex: 1 }} />
 
-      {/* Ambient orbs */}
+      {/* Orbs */}
       <div style={{ position: 'fixed', top: '-15%', right: '-10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(251,191,36,0.09) 0%,transparent 70%)', animation: 'drift1 9s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'fixed', bottom: '-20%', left: '-10%', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(6,182,212,0.06) 0%,transparent 70%)', animation: 'drift2 12s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'fixed', top: '40%', left: '30%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(236,72,153,0.05) 0%,transparent 70%)', animation: 'drift3 15s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
 
-      {/* Content — 390px iPhone-first column */}
-      <div style={{ maxWidth: '390px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 2 }}>
+      {/* Scrollable content — bottom padding clears sticky footer */}
+      <div style={{ maxWidth: '390px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 2, paddingBottom: '180px' }}>
 
-        {/* ── Header ───────────────────────────────────────────── */}
+        {/* Header */}
         <div style={{ padding: '56px 0 0' }}>
           <p style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 14px' }}>{today}</p>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '22px' }}>
             <div>
-              <h1 style={{ fontFamily: FONT_SYNE, fontSize: '32px', fontWeight: 800, margin: 0, lineHeight: 1.15, color: 'rgba(255,255,255,0.85)' }}>{greeting},</h1>
-              <h1 style={{ fontFamily: FONT_SYNE, fontSize: '32px', fontWeight: 800, margin: 0, lineHeight: 1.15, background: 'linear-gradient(135deg,#fbbf24,#f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Demonte.</h1>
+              <h1 style={{ fontFamily: FONT_SYNE, fontSize: '30px', fontWeight: 800, margin: 0, lineHeight: 1.15, color: 'rgba(255,255,255,0.85)' }}>{greeting},</h1>
+              <h1 style={{ fontFamily: FONT_SYNE, fontSize: '30px', fontWeight: 800, margin: 0, lineHeight: 1.15, background: 'linear-gradient(135deg,#fbbf24,#f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Demonte.</h1>
             </div>
             <button
               onClick={handleSignOut}
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', color: 'rgba(255,255,255,0.22)', fontSize: '10px', fontFamily: FONT_MONO, padding: '7px 15px', cursor: 'pointer', letterSpacing: '0.08em' }}
+              className="signout-btn"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', color: 'rgba(255,255,255,0.22)', fontSize: '10px', fontFamily: FONT_MONO, padding: '6px 14px', cursor: 'pointer', letterSpacing: '0.08em' }}
             >
               sign out
             </button>
           </div>
 
-          {/* Gold horizontal rule */}
+          {/* Gold rule */}
           <div style={{ height: '1px', background: 'linear-gradient(90deg,rgba(251,191,36,0.7) 0%,rgba(251,191,36,0.15) 60%,transparent 100%)', marginBottom: '28px' }} />
         </div>
 
-        {/* ── Habits ───────────────────────────────────────────── */}
+        {/* Habits */}
         <div>
           <p style={{ fontFamily: FONT_MONO, fontSize: '9px', color: 'rgba(255,255,255,0.14)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 16px' }}>LAW OF 100</p>
 
@@ -218,50 +233,41 @@ export default function Home() {
                   style={{
                     background: 'linear-gradient(135deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.018) 100%)',
                     borderRadius: '22px',
-                    padding: '20px',
+                    padding: '18px',
                     marginBottom: '12px',
                     position: 'relative',
                     overflow: 'hidden',
-                    // Outer glow + hairline border via box-shadow; bright inner top edge
                     boxShadow: `0 0 0 1px rgba(255,255,255,0.055), inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 48px ${glow}`,
                   }}
                 >
-                  {/* Bright top border — fades to transparent at sides */}
+                  {/* Top border — bright center, fades to transparent */}
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: `linear-gradient(90deg,transparent 0%,${color}bb 25%,${color}ff 50%,${color}bb 75%,transparent 100%)` }} />
-
-                  {/* Corner radiance */}
+                  {/* Corner glow */}
                   <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: `radial-gradient(circle,${glow} 0%,transparent 70%)`, pointerEvents: 'none' }} />
 
-                  {/* Apple Stocks layout */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <div>
-                      <p style={{ fontFamily: FONT_SYNE, fontWeight: 700, fontSize: '17px', margin: '0 0 3px', color: '#fff', letterSpacing: '-0.01em' }}>{habit.name}</p>
+                  {/* Apple Stocks: name left, count right */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+                    <div style={{ paddingTop: '2px' }}>
+                      <p style={{ fontFamily: FONT_SYNE, fontWeight: 700, fontSize: '16px', margin: '0 0 3px', color: '#fff', letterSpacing: '-0.01em' }}>{habit.name}</p>
                       <p style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.2)', margin: 0 }}>{remaining} reps to go</p>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      {/* Animated count-up number */}
-                      <p style={{ fontFamily: FONT_MONO, fontSize: '42px', fontWeight: 300, margin: 0, color, lineHeight: 1, letterSpacing: '-0.02em' }}>{displayCount}</p>
+                      {/* Count-up — 36px on mobile, slightly smaller than before */}
+                      <p style={{ fontFamily: FONT_MONO, fontSize: '36px', fontWeight: 300, margin: 0, color, lineHeight: 1, letterSpacing: '-0.02em' }}>{displayCount}</p>
                       <p style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.15)', margin: 0 }}>/ {habit.target_reps}</p>
                     </div>
                   </div>
 
-                  {/* Progress bar — slides in on load via CSS transition */}
-                  <div style={{ background: 'rgba(255,255,255,0.05)', height: '2px', borderRadius: '1px', overflow: 'hidden', marginBottom: '16px' }}>
-                    <div style={{
-                      background: `linear-gradient(90deg,${color},${color}77)`,
-                      height: '100%',
-                      width: `${barWidth}%`,
-                      borderRadius: '1px',
-                      transition: 'width 1.1s cubic-bezier(0.4,0,0.2,1)',
-                      boxShadow: `0 0 10px ${color}88`,
-                    }} />
+                  {/* Progress bar */}
+                  <div style={{ background: 'rgba(255,255,255,0.05)', height: '2px', borderRadius: '1px', overflow: 'hidden', marginBottom: '14px' }}>
+                    <div style={{ background: `linear-gradient(90deg,${color},${color}77)`, height: '100%', width: `${barWidth}%`, borderRadius: '1px', transition: 'width 1.1s cubic-bezier(0.4,0,0.2,1)', boxShadow: `0 0 10px ${color}88` }} />
                   </div>
 
-                  {/* BLK-style rep button */}
+                  {/* Rep button — 48px min height */}
                   <button
                     onClick={() => handleAddRep(habit.id)}
                     className="rep-btn"
-                    style={{ width: '100%', padding: '13px', background: `linear-gradient(135deg,${color}18,${color}08)`, border: `1px solid ${color}30`, borderRadius: '13px', color, fontFamily: FONT_SYNE, fontWeight: 700, fontSize: '12px', cursor: 'pointer', letterSpacing: '0.1em', textTransform: 'uppercase' }}
+                    style={{ width: '100%', padding: '14px', background: `linear-gradient(135deg,${color}18,${color}08)`, border: `1px solid ${color}30`, borderRadius: '13px', color, fontFamily: FONT_SYNE, fontWeight: 700, fontSize: '13px', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}
                   >
                     + Rep &nbsp;·&nbsp; {actualProgress}%
                   </button>
@@ -270,17 +276,19 @@ export default function Home() {
             );
           })}
         </div>
+      </div>
 
-        {/* ── Footer ───────────────────────────────────────────── */}
-        <div style={{ padding: '20px 0 68px' }}>
+      {/* Sticky footer — fixed to bottom, blurs/fades content underneath */}
+      <div className="sticky-footer">
+        <div style={{ maxWidth: '390px', margin: '0 auto' }}>
           <a
             href="/ignite"
             className="ignite-link"
-            style={{ width: '100%', padding: '17px', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '13px', letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', textAlign: 'center', borderRadius: '16px', boxShadow: '0 8px 36px rgba(251,191,36,0.3)', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '15px 20px', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '13px', letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '16px', boxShadow: '0 8px 36px rgba(251,191,36,0.3)', boxSizing: 'border-box' }}
           >
             IGNITE TODAY
           </a>
-          <a href="/history" style={{ display: 'block', padding: '14px', color: 'rgba(255,255,255,0.15)', fontFamily: FONT_MONO, fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', textAlign: 'center', marginTop: '4px' }}>
+          <a href="/history" style={{ display: 'block', padding: '12px', color: 'rgba(255,255,255,0.15)', fontFamily: FONT_MONO, fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', textAlign: 'center', marginTop: '2px' }}>
             VIEW IGNITION LOG
           </a>
         </div>
