@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 type Habit = { id: number; name: string; current_reps: number; target_reps: number; category: string };
+type Brain = { greeting: string; analysis: string; roadmap: string[]; momentum: string };
 
 const COLORS: Record<string, string> = {
   AMC: '#fbbf24',
@@ -15,6 +16,13 @@ const GLOWS: Record<string, string> = {
   AMC: 'rgba(251,191,36,0.22)',
   OnlyFans: 'rgba(236,72,153,0.22)',
   Monte: 'rgba(6,182,212,0.22)',
+};
+
+const MOMENTUM_COLOR: Record<string, string> = {
+  'LOCKED IN':    '#fbbf24',
+  'BUILDING':     '#06b6d4',
+  'DRIFTING':     '#ec4899',
+  'RESET NEEDED': 'rgba(255,120,120,0.9)',
 };
 
 const FONT_SYNE = 'var(--font-syne), Syne, sans-serif';
@@ -39,6 +47,12 @@ const STYLES = `
   @keyframes shimmer {
     0%{background-position:-200% center} 100%{background-position:200% center}
   }
+  @keyframes skeletonPulse {
+    0%,100%{opacity:0.3} 50%{opacity:0.65}
+  }
+  @keyframes brainFadeIn {
+    from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)}
+  }
 
   .grain {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
@@ -51,12 +65,22 @@ const STYLES = `
     -webkit-backdrop-filter: blur(24px);
   }
 
+  /* Skeleton lines */
+  .skel {
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    animation: skeletonPulse 1.6s ease-in-out infinite;
+  }
+
+  /* Brain card entrance */
+  .brain-card { animation: brainFadeIn 0.65s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+  /* Habit cards */
   .habit-card { opacity:0; animation:fadeSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
   .habit-card:nth-child(1) { animation-delay:0.12s; }
   .habit-card:nth-child(2) { animation-delay:0.26s; }
   .habit-card:nth-child(3) { animation-delay:0.40s; }
 
-  /* Rep button — 48px min touch target */
   .rep-btn {
     min-height: 48px;
     transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
@@ -64,9 +88,7 @@ const STYLES = `
   }
   .rep-btn:active { transform:scale(0.97); filter:brightness(0.9); }
 
-  /* IGNITE shimmer button */
   .ignite-link {
-    display: block;
     background: linear-gradient(90deg,#d97706,#fbbf24,#fef9ec,#fbbf24,#d97706);
     background-size: 300% auto;
     animation: shimmer 3.2s linear infinite;
@@ -78,7 +100,6 @@ const STYLES = `
   }
   .ignite-link:active { opacity:0.88; }
 
-  /* Sticky footer — fades content out behind it */
   .sticky-footer {
     position: fixed;
     bottom: 0;
@@ -92,7 +113,6 @@ const STYLES = `
     background: linear-gradient(to top, rgba(10,13,26,1) 0%, rgba(10,13,26,0.96) 55%, transparent 100%);
   }
 
-  /* Sign-out — generous tap area */
   .signout-btn {
     min-height: 36px;
     display: flex;
@@ -101,12 +121,89 @@ const STYLES = `
   }
 `;
 
+// ── Brain skeleton ──────────────────────────────────────────────────
+function BrainSkeleton() {
+  return (
+    <div
+      className="card-glass"
+      style={{ background: 'linear-gradient(135deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.015) 100%)', borderRadius: '22px', padding: '18px', marginBottom: '24px', position: 'relative', overflow: 'hidden', boxShadow: '0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.08)' }}
+    >
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg,transparent,rgba(251,191,36,0.3),transparent)' }} />
+      {/* label row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <div className="skel" style={{ width: '100px', height: '8px' }} />
+        <div className="skel" style={{ width: '72px', height: '22px', borderRadius: '11px' }} />
+      </div>
+      {/* greeting */}
+      <div className="skel" style={{ width: '85%', height: '14px', marginBottom: '10px' }} />
+      {/* analysis */}
+      <div className="skel" style={{ width: '100%', height: '10px', marginBottom: '6px' }} />
+      <div className="skel" style={{ width: '90%', height: '10px', marginBottom: '6px' }} />
+      <div className="skel" style={{ width: '70%', height: '10px', marginBottom: '14px' }} />
+      {/* roadmap */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="skel" style={{ width: '95%', height: '10px' }} />
+        <div className="skel" style={{ width: '80%', height: '10px' }} />
+        <div className="skel" style={{ width: '88%', height: '10px' }} />
+      </div>
+    </div>
+  );
+}
+
+// ── Brain card ──────────────────────────────────────────────────────
+function BrainCard({ brain }: { brain: Brain }) {
+  const momentumColor = MOMENTUM_COLOR[brain.momentum] || 'rgba(255,255,255,0.4)';
+
+  return (
+    <div
+      className="card-glass brain-card"
+      style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.05) 0%,rgba(255,255,255,0.02) 100%)', borderRadius: '22px', padding: '18px', marginBottom: '24px', position: 'relative', overflow: 'hidden', boxShadow: '0 0 0 1px rgba(251,191,36,0.12), inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 48px rgba(251,191,36,0.08)' }}
+    >
+      {/* Top shimmer — gold */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg,transparent 0%,rgba(251,191,36,0.7) 30%,rgba(251,191,36,0.95) 50%,rgba(251,191,36,0.7) 70%,transparent 100%)' }} />
+      {/* Corner radiance */}
+      <div style={{ position: 'absolute', top: '-24px', right: '-24px', width: '100px', height: '100px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(251,191,36,0.12) 0%,transparent 70%)', pointerEvents: 'none' }} />
+
+      {/* Label + momentum badge */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <p style={{ fontFamily: FONT_MONO, fontSize: '9px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.22em', textTransform: 'uppercase', margin: 0 }}>Monte OS Brain</p>
+        <div style={{ padding: '3px 10px', borderRadius: '20px', border: `1px solid ${momentumColor}44`, background: `${momentumColor}14` }}>
+          <span style={{ fontFamily: FONT_MONO, fontSize: '9px', color: momentumColor, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500 }}>{brain.momentum}</span>
+        </div>
+      </div>
+
+      {/* Greeting */}
+      <p style={{ fontFamily: FONT_SYNE, fontWeight: 700, fontSize: '15px', color: '#fff', margin: '0 0 10px', lineHeight: 1.3 }}>{brain.greeting}</p>
+
+      {/* Analysis */}
+      <p style={{ fontFamily: FONT_MONO, fontSize: '11px', color: 'rgba(255,255,255,0.45)', margin: '0 0 14px', lineHeight: 1.65 }}>{brain.analysis}</p>
+
+      {/* Gold divider */}
+      <div style={{ height: '1px', background: 'linear-gradient(90deg,rgba(251,191,36,0.3),transparent)', marginBottom: '12px' }} />
+
+      {/* Roadmap */}
+      <p style={{ fontFamily: FONT_MONO, fontSize: '9px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 8px' }}>Today&apos;s Roadmap</p>
+      <ol style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {brain.roadmap.map((task, i) => (
+          <li key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+            <span style={{ fontFamily: FONT_MONO, fontSize: '10px', color: '#fbbf24', fontWeight: 500, lineHeight: 1.6, flexShrink: 0 }}>{i + 1}.</span>
+            <span style={{ fontFamily: FONT_MONO, fontSize: '11px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{task}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+// ── Home ────────────────────────────────────────────────────────────
 export default function Home() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState('');
   const [displayCounts, setDisplayCounts] = useState<Record<number, number>>({});
   const [progressReady, setProgressReady] = useState(false);
+  const [brain, setBrain] = useState<Brain | null>(null);
+  const [brainLoading, setBrainLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -118,6 +215,14 @@ export default function Home() {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/login'); return; }
+
+      // Fire brain fetch in background — doesn't block habit render
+      fetch('/api/brain')
+        .then(r => (r.ok ? r.json() : null))
+        .then((data: Brain | null) => { if (data) setBrain(data); })
+        .catch(() => {})
+        .finally(() => setBrainLoading(false));
+
       const { data, error } = await supabase.from('habits').select('*').order('id');
 
       if (!error && data) {
@@ -164,7 +269,7 @@ export default function Home() {
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  /* ── Loading ── */
+  /* ── Loading screen ── */
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#0a0a0f 0%,#0f0a1a 50%,#0a0f1a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -189,7 +294,7 @@ export default function Home() {
       <div style={{ position: 'fixed', bottom: '-20%', left: '-10%', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(6,182,212,0.06) 0%,transparent 70%)', animation: 'drift2 12s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'fixed', top: '40%', left: '30%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(236,72,153,0.05) 0%,transparent 70%)', animation: 'drift3 15s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
 
-      {/* Scrollable content — bottom padding clears sticky footer */}
+      {/* Scrollable content */}
       <div style={{ maxWidth: '390px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 2, paddingBottom: '180px' }}>
 
         {/* Header */}
@@ -211,10 +316,14 @@ export default function Home() {
           </div>
 
           {/* Gold rule */}
-          <div style={{ height: '1px', background: 'linear-gradient(90deg,rgba(251,191,36,0.7) 0%,rgba(251,191,36,0.15) 60%,transparent 100%)', marginBottom: '28px' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg,rgba(251,191,36,0.7) 0%,rgba(251,191,36,0.15) 60%,transparent 100%)', marginBottom: '24px' }} />
         </div>
 
-        {/* Habits */}
+        {/* ── Monte OS Brain ── */}
+        {brainLoading && <BrainSkeleton />}
+        {!brainLoading && brain && <BrainCard brain={brain} />}
+
+        {/* ── Habits ── */}
         <div>
           <p style={{ fontFamily: FONT_MONO, fontSize: '9px', color: 'rgba(255,255,255,0.14)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 16px' }}>LAW OF 100</p>
 
@@ -230,40 +339,26 @@ export default function Home() {
               <div key={habit.id} className="habit-card">
                 <div
                   className="card-glass"
-                  style={{
-                    background: 'linear-gradient(135deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.018) 100%)',
-                    borderRadius: '22px',
-                    padding: '18px',
-                    marginBottom: '12px',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    boxShadow: `0 0 0 1px rgba(255,255,255,0.055), inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 48px ${glow}`,
-                  }}
+                  style={{ background: 'linear-gradient(135deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.018) 100%)', borderRadius: '22px', padding: '18px', marginBottom: '12px', position: 'relative', overflow: 'hidden', boxShadow: `0 0 0 1px rgba(255,255,255,0.055), inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 48px ${glow}` }}
                 >
-                  {/* Top border — bright center, fades to transparent */}
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: `linear-gradient(90deg,transparent 0%,${color}bb 25%,${color}ff 50%,${color}bb 75%,transparent 100%)` }} />
-                  {/* Corner glow */}
                   <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: `radial-gradient(circle,${glow} 0%,transparent 70%)`, pointerEvents: 'none' }} />
 
-                  {/* Apple Stocks: name left, count right */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
                     <div style={{ paddingTop: '2px' }}>
                       <p style={{ fontFamily: FONT_SYNE, fontWeight: 700, fontSize: '16px', margin: '0 0 3px', color: '#fff', letterSpacing: '-0.01em' }}>{habit.name}</p>
                       <p style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.2)', margin: 0 }}>{remaining} reps to go</p>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      {/* Count-up — 36px on mobile, slightly smaller than before */}
                       <p style={{ fontFamily: FONT_MONO, fontSize: '36px', fontWeight: 300, margin: 0, color, lineHeight: 1, letterSpacing: '-0.02em' }}>{displayCount}</p>
                       <p style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.15)', margin: 0 }}>/ {habit.target_reps}</p>
                     </div>
                   </div>
 
-                  {/* Progress bar */}
                   <div style={{ background: 'rgba(255,255,255,0.05)', height: '2px', borderRadius: '1px', overflow: 'hidden', marginBottom: '14px' }}>
                     <div style={{ background: `linear-gradient(90deg,${color},${color}77)`, height: '100%', width: `${barWidth}%`, borderRadius: '1px', transition: 'width 1.1s cubic-bezier(0.4,0,0.2,1)', boxShadow: `0 0 10px ${color}88` }} />
                   </div>
 
-                  {/* Rep button — 48px min height */}
                   <button
                     onClick={() => handleAddRep(habit.id)}
                     className="rep-btn"
@@ -278,7 +373,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Sticky footer — fixed to bottom, blurs/fades content underneath */}
+      {/* Sticky footer */}
       <div className="sticky-footer">
         <div style={{ maxWidth: '390px', margin: '0 auto' }}>
           <a
