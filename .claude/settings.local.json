@@ -14,7 +14,9 @@
       "mcp__claude_ai_Supabase__apply_migration",
       "Bash(node -e \"require\\('@anthropic-ai/sdk'\\)\")",
       "Bash(npm install *)",
-      "Bash(node -e \"require\\('@anthropic-ai/sdk'\\); console.log\\('ok'\\)\")"
+      "Bash(node -e \"require\\('@anthropic-ai/sdk'\\); console.log\\('ok'\\)\")",
+      "mcp__claude_ai_Vercel__list_teams",
+      "mcp__claude_ai_Vercel__get_runtime_logs"
     ]
   }
 }
