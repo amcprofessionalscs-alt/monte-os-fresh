@@ -51,7 +51,7 @@ export default function LoginPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: 'https://monte-os-fresh.vercel.app/auth/callback' },
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) { alert('Error: ' + error.message); } else { setSent(true); }
     setLoading(false);

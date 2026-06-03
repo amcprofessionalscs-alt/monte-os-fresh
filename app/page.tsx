@@ -509,12 +509,12 @@ export default function Home() {
       <div className="sticky-footer">
         <div style={{ maxWidth: '390px', margin: '0 auto' }}>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch', marginBottom: '6px' }}>
-            {/* Chat FAB */}
-            <button onClick={() => setChatOpen(true)} className="chat-fab" style={{ width: '52px', flexShrink: 0, borderRadius: '16px', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.28)', color: '#fbbf24', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              ⚡
+            {/* Brain Chat button — prominent, labeled */}
+            <button onClick={() => setChatOpen(true)} className="chat-fab" style={{ flex: 1, borderRadius: '16px', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.28)', color: '#fbbf24', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', minHeight: '52px' }}>
+              ⚡ Brain Chat
             </button>
             {/* IGNITE */}
-            <a href="/ignite" className="ignite-link" style={{ flex: 1, padding: '15px 20px', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '13px', letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '16px', boxShadow: '0 8px 40px rgba(251,191,36,0.4)', boxSizing: 'border-box' }}>
+            <a href="/ignite" className="ignite-link" style={{ flex: 1.2, padding: '15px 20px', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '13px', letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '16px', boxShadow: '0 8px 40px rgba(251,191,36,0.4)', boxSizing: 'border-box' }}>
               IGNITE TODAY
             </a>
           </div>
