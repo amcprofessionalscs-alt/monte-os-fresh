@@ -46,7 +46,7 @@ export async function POST(req: Request) {
               controller.enqueue(encoder.encode(chunk.delta.text));
             }
           }
-        } catch (err) {
+        } catch {
           controller.enqueue(encoder.encode('\n[Error — try again]'));
         } finally {
           controller.close();

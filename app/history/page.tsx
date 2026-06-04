@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
 type Ignition = { id: number; created_at: string; energy: number; focus: number; mood: string; goal: string };
@@ -95,7 +96,7 @@ export default function HistoryPage() {
 
         {/* Header */}
         <div style={{ padding: '56px 0 0' }}>
-          <a href="/" style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', display: 'block', marginBottom: '20px' }}>← Home</a>
+          <Link href="/" style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', display: 'block', marginBottom: '20px' }}>← Home</Link>
           <h1 style={{ fontFamily: FONT_SYNE, fontSize: '32px', fontWeight: 800, margin: '0 0 2px', color: 'rgba(255,255,255,0.85)' }}>Ignition</h1>
           <h1 style={{ fontFamily: FONT_SYNE, fontSize: '32px', fontWeight: 800, margin: '0 0 22px', background: 'linear-gradient(135deg,#fbbf24,#f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Log.</h1>
           {/* Gold rule */}
@@ -106,7 +107,7 @@ export default function HistoryPage() {
         {ignitions.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
             <p style={{ fontFamily: FONT_SYNE, fontSize: '18px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', marginBottom: '12px' }}>No ignitions yet.</p>
-            <a href="/ignite" style={{ fontFamily: FONT_MONO, fontSize: '11px', color: '#fbbf24', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none' }}>Log your first one →</a>
+            <Link href="/ignite" style={{ fontFamily: FONT_MONO, fontSize: '11px', color: '#fbbf24', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none' }}>Log your first one →</Link>
           </div>
         )}
 

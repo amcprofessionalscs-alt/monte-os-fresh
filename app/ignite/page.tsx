@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
@@ -355,7 +356,7 @@ export default function IgnitionPage() {
           {/* NS badge + back link row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <NSBadge size={38} />
-            <a href="/" style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', minHeight: '44px', display: 'flex', alignItems: 'center' }}>← Home</a>
+            <Link href="/" style={{ fontFamily: FONT_MONO, fontSize: '10px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', minHeight: '44px', display: 'flex', alignItems: 'center' }}>← Home</Link>
           </div>
 
           <h1 style={{ fontFamily: FONT_SYNE, fontSize: '30px', fontWeight: 800, margin: '0 0 2px', color: 'rgba(255,255,255,0.85)' }}>Daily</h1>

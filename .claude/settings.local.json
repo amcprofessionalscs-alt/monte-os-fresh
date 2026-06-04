@@ -16,7 +16,19 @@
       "Bash(npm install *)",
       "Bash(node -e \"require\\('@anthropic-ai/sdk'\\); console.log\\('ok'\\)\")",
       "mcp__claude_ai_Vercel__list_teams",
-      "mcp__claude_ai_Vercel__get_runtime_logs"
+      "mcp__claude_ai_Vercel__get_runtime_logs",
+      "mcp__claude_ai_Google_Drive__read_file_content",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__get_project",
+      "mcp__claude_ai_Vercel__get_deployment_build_logs",
+      "PowerShell(Test-Path *)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\amcpr\"; git status --short 2>&1 | Where-Object { $_ -match \"^[MADRCU]\" })",
+      "mcp__claude_ai_Google_Drive__search_files",
+      "Read(//c/projects/amc-final/**)",
+      "Bash(dir -Recurse -Force)",
+      "Bash(Select-Object -Property FullName)",
+      "Bash(node -e \"const pkg = require\\('./package.json'\\); console.log\\('framer-motion:', pkg.dependencies['framer-motion']\\)\")",
+      "Bash(node *)"
     ]
   }
 }

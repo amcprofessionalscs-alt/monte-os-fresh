@@ -1,0 +1,10 @@
+PLATFORM: LinkedIn
+TIME: 6:00 PM
+
+CAPTION:
+Monte OS is now running!
+
+Testing the automation system.
+Drop file → System detects → Notion logs → Success!
+
+#MonteOS #Testing
