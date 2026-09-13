@@ -9,10 +9,10 @@ const FONT_SYNE = 'var(--font-syne), Syne, sans-serif';
 const FONT_MONO = 'var(--font-dm-mono), DM Mono, monospace';
 
 const TIERS = [
-  { name: 'OS Audit', price: 197, description: 'One-time audit', terms: 'One-time, 48-hr', features: ['Tool audit', 'Bottleneck map', 'Top 3 opportunities', 'Loom walkthrough'], key: 'audit' as const },
-  { name: 'Operator Lite', price: 997, description: 'Monthly support', terms: 'Month-to-month', features: ['Monthly call', 'System tune-ups', 'Async questions', 'For founders'], key: 'lite' as const },
-  { name: 'Operator Pro', price: 1997, description: 'Hands-on execution', terms: '3-month minimum', features: ['Weekly calls', 'Execution support', 'Systems built', 'Maintained'], key: 'pro' as const },
-  { name: 'Licensed Partner', price: 2997, description: 'White-label OS', terms: 'Annual', features: ['White-label framework', 'Prompt system', 'Templates', 'Keep 100% revenue'], key: 'partner' as const },
+  { name: 'OS Audit', price: 197, description: 'One-time audit', terms: 'One-time, 48-hr', features: ['Tool audit', 'Bottleneck map', 'Top 3 opportunities', 'Loom walkthrough'], key: 'audit' as const, ctaLink: '/book' },
+  { name: 'Operator Lite', price: 997, description: 'Monthly support', terms: 'Month-to-month', features: ['Monthly call', 'System tune-ups', 'Async questions', 'For founders'], key: 'lite' as const, ctaLink: '/book' },
+  { name: 'Operator Pro', price: 1997, description: 'Hands-on execution', terms: '3-month minimum', features: ['Weekly calls', 'Execution support', 'Systems built', 'Maintained'], key: 'pro' as const, ctaLink: '/book' },
+  { name: 'Licensed Partner', price: 2997, description: 'White-label OS', terms: 'Annual', features: ['White-label framework', 'Prompt system', 'Templates', 'Keep 100% revenue'], key: 'partner' as const, ctaLink: '/book' },
 ];
 
 export default function PricingPage() {
