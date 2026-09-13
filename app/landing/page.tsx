@@ -36,6 +36,14 @@ const STYLES = `
     0%,100% { transform: translateY(0px) }
     50% { transform: translateY(-20px) }
   }
+  @keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-30px) }
+    to { opacity: 1; transform: translateY(0) }
+  }
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px) }
+    to { opacity: 1; transform: translateY(0) }
+  }
   .cta-shimmer {
     background: linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706);
     background-size: 300% auto;
@@ -46,7 +54,14 @@ const STYLES = `
   }
 `;
 
-const FEATURES = [
+interface FeatureCard {
+  icon: string;
+  title: string;
+  description: string;
+  delay: number;
+}
+
+const FEATURES: FeatureCard[] = [
   {
     icon: '🎯',
     title: 'Strategic Clarity',
@@ -73,13 +88,20 @@ const FEATURES = [
   },
 ];
 
-export default function Home() {
+export default function LandingPage() {
+  const [scrollY, setScrollY] = useState(0);
   const [auditLink, setAuditLink] = useState('');
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     getPaymentLink('audit').then(setAuditLink).catch(err => {
       console.error('Failed to load payment link:', err);
-      setAuditLink('');
+      setAuditLink('https://checkout.stripe.com/pay/');
     });
   }, []);
 
@@ -87,10 +109,12 @@ export default function Home() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #0d0a18 40%, #0a0d1a 100%)', color: 'white', position: 'relative', overflow: 'hidden' }}>
       <style>{STYLES}</style>
 
+      {/* Animated background orbs */}
       <div style={{ position: 'fixed', top: '-15%', right: '-10%', width: '560px', height: '560px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(251,191,36,0.14) 0%, transparent 70%)', animation: 'drift1 9s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'fixed', bottom: '-20%', left: '-10%', width: '660px', height: '660px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)', animation: 'drift2 12s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'fixed', top: '40%', left: '30%', width: '340px', height: '340px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 70%)', animation: 'drift3 15s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
 
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -104,15 +128,16 @@ export default function Home() {
           <span style={{ fontFamily: FONT_SYNE, fontSize: '20px', fontWeight: 800 }}>Next Step OS</span>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
-          <Link href="/pricing" style={{ fontFamily: FONT_MONO, fontSize: '12px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}>
+          <Link href="/pricing" style={{ fontFamily: FONT_MONO, fontSize: '12px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', transition: 'all 0.3s ease' }}>
             Pricing
           </Link>
-          <Link href="/partner" style={{ fontFamily: FONT_MONO, fontSize: '12px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}>
+          <Link href="/partner" style={{ fontFamily: FONT_MONO, fontSize: '12px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', transition: 'all 0.3s ease' }}>
             For Partners
           </Link>
         </div>
       </motion.div>
 
+      {/* Hero Section */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px 120px', position: 'relative', zIndex: 2 }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -127,40 +152,36 @@ export default function Home() {
             Your Next Step OS Audit is a comprehensive review of your systems, bottlenecks, and opportunities. Get a clear roadmap in 48 hours.
           </p>
 
-          {auditLink ? (
-            <motion.a
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              href={auditLink}
-              style={{
-                display: 'inline-block',
-                padding: '18px 48px',
-                background: 'linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706)',
-                backgroundSize: '300% auto',
-                color: '#000',
-                fontFamily: FONT_SYNE,
-                fontWeight: 800,
-                fontSize: '16px',
-                textDecoration: 'none',
-                borderRadius: '14px',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 12px 48px rgba(251,191,36,0.35)',
-                animation: 'shimmer 3.2s linear infinite',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-              className="cta-shimmer"
-            >
-              Get the Audit — $197
-            </motion.a>
-          ) : (
-            <div style={{ display: 'inline-block', padding: '18px 48px', background: 'rgba(251,191,36,0.2)', color: '#fbbf24', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '16px', borderRadius: '14px', textTransform: 'uppercase', opacity: 0.6 }}>
-              Loading...
-            </div>
-          )}
+          <motion.a
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            href={auditLink || 'javascript:void(0)'}
+            onClick={(e) => !auditLink && e.preventDefault()}
+            style={{
+              display: 'inline-block',
+              padding: '18px 48px',
+              background: 'linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706)',
+              backgroundSize: '300% auto',
+              color: '#000',
+              fontFamily: FONT_SYNE,
+              fontWeight: 800,
+              fontSize: '16px',
+              textDecoration: 'none',
+              borderRadius: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 12px 48px rgba(251,191,36,0.35)',
+              animation: 'shimmer 3.2s linear infinite',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+            }}
+            className="cta-shimmer"
+          >
+            Get the Audit — $197
+          </motion.a>
         </motion.div>
 
+        {/* Features Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '28px', marginBottom: '80px' }}>
           {FEATURES.map((feature, idx) => (
             <motion.div
@@ -188,6 +209,7 @@ export default function Home() {
           ))}
         </div>
 
+        {/* What's Included Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -222,6 +244,45 @@ export default function Home() {
         </motion.div>
       </div>
 
+      {/* Footer CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        style={{ maxWidth: '600px', margin: '120px auto 40px', padding: '0 20px', textAlign: 'center', position: 'relative', zIndex: 2 }}
+      >
+        <p style={{ fontFamily: FONT_MONO, fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 20px' }}>
+          Ready to unlock your next step?
+        </p>
+        <motion.a
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          href={auditLink || 'javascript:void(0)'}
+          onClick={(e) => !auditLink && e.preventDefault()}
+          style={{
+            display: 'inline-block',
+            padding: '16px 44px',
+            background: 'linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706)',
+            backgroundSize: '300% auto',
+            color: '#000',
+            fontFamily: FONT_SYNE,
+            fontWeight: 800,
+            fontSize: '14px',
+            textDecoration: 'none',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            boxShadow: '0 12px 48px rgba(251,191,36,0.35)',
+            animation: 'shimmer 3.2s linear infinite',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+          }}
+          className="cta-shimmer"
+        >
+          Start Your Audit
+        </motion.a>
+      </motion.div>
+
+      {/* Footer */}
       <div style={{ padding: '40px 20px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)', position: 'relative', zIndex: 2 }}>
         <p style={{ fontFamily: FONT_MONO, fontSize: '11px', color: 'rgba(255,255,255,0.3)', margin: 0 }}>
           Next Step OS • Secure payments with Stripe • No hidden fees

@@ -20,6 +20,11 @@
 # production
 /build
 
+# native builds
+/dist-electron
+/ios
+/android
+
 # misc
 .DS_Store
 *.pem

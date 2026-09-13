@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { AUTH_REDIRECT } from '@/lib/native';
 
 const FONT_SYNE = 'var(--font-syne), Syne, sans-serif';
 const FONT_MONO = 'var(--font-dm-mono), DM Mono, monospace';
@@ -51,7 +52,7 @@ export default function LoginPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { emailRedirectTo: AUTH_REDIRECT },
     });
     if (error) { alert('Error: ' + error.message); } else { setSent(true); }
     setLoading(false);

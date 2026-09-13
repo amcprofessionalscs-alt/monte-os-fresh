@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NSBadge } from './NSBadge';
+import { apiUrl } from '@/lib/api';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
@@ -38,7 +39,7 @@ export function ChatPanel({
     setStreaming(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(apiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

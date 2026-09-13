@@ -28,7 +28,13 @@
       "Bash(dir -Recurse -Force)",
       "Bash(Select-Object -Property FullName)",
       "Bash(node -e \"const pkg = require\\('./package.json'\\); console.log\\('framer-motion:', pkg.dependencies['framer-motion']\\)\")",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:3000/login)",
+      "Bash(curl -s http://localhost:3000/pricing)",
+      "Bash(xargs grep -l \"book\\\\|call\\\\|payment\" -i)",
+      "Bash(chmod +x /tmp/verify-changes.sh)",
+      "Bash(/tmp/verify-changes.sh)"
     ]
   }
 }
