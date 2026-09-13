@@ -8,7 +8,9 @@ import { getPaymentLink } from '@/lib/payment-links';
 const FONT_SYNE = 'var(--font-syne), Syne, sans-serif';
 const FONT_MONO = 'var(--font-dm-mono), DM Mono, monospace';
 
-const TIERS = [
+type Tier = { name: string; price: number; description: string; terms: string; features: string[]; key: string; ctaLink?: string };
+
+const TIERS: Tier[] = [
   { name: 'OS Audit', price: 197, description: 'One-time audit', terms: 'One-time, 48-hr', features: ['Tool audit', 'Bottleneck map', 'Top 3 opportunities', 'Loom walkthrough'], key: 'audit' as const, ctaLink: '/book' },
   { name: 'Operator Lite', price: 997, description: 'Monthly support', terms: 'Month-to-month', features: ['Monthly call', 'System tune-ups', 'Async questions', 'For founders'], key: 'lite' as const, ctaLink: '/book' },
   { name: 'Operator Pro', price: 1997, description: 'Hands-on execution', terms: '3-month minimum', features: ['Weekly calls', 'Execution support', 'Systems built', 'Maintained'], key: 'pro' as const, ctaLink: '/book' },
