@@ -61,18 +61,6 @@ interface Tier {
   isPrimary?: boolean;
   isPopular?: boolean;
   ctaText: string;
-  ctaLink: string;
-}
-
-interface Tier {
-  name: string;
-  price: string | number;
-  description: string;
-  terms: string;
-  features: string[];
-  isPrimary?: boolean;
-  isPopular?: boolean;
-  ctaText: string;
   tierKey: 'audit' | 'lite' | 'pro' | 'partner';
 }
 
