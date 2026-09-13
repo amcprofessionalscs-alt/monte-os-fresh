@@ -8,7 +8,7 @@ import { getPaymentLink } from '@/lib/payment-links';
 const FONT_SYNE = 'var(--font-syne), Syne, sans-serif';
 const FONT_MONO = 'var(--font-dm-mono), DM Mono, monospace';
 
-type Tier = { name: string; price: number; description: string; terms: string; features: string[]; key: string; ctaLink?: string };
+type Tier = { name: string; price: number; description: string; terms: string; features: string[]; key: 'audit' | 'lite' | 'pro' | 'partner'; ctaLink?: string };
 
 const TIERS: Tier[] = [
   { name: 'OS Audit', price: 197, description: 'One-time audit', terms: 'One-time, 48-hr', features: ['Tool audit', 'Bottleneck map', 'Top 3 opportunities', 'Loom walkthrough'], key: 'audit' as const, ctaLink: '/book' },
