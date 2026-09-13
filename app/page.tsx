@@ -128,32 +128,9 @@ export default function Home() {
           </p>
 
           {auditLink ? (
-            <motion.a
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              href={auditLink}
-              style={{
-                display: 'inline-block',
-                padding: '18px 48px',
-                background: 'linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706)',
-                backgroundSize: '300% auto',
-                color: '#000',
-                fontFamily: FONT_SYNE,
-                fontWeight: 800,
-                fontSize: '16px',
-                textDecoration: 'none',
-                borderRadius: '14px',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 12px 48px rgba(251,191,36,0.35)',
-                animation: 'shimmer 3.2s linear infinite',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-              className="cta-shimmer"
-            >
+            <a href={auditLink} style={{ display: 'inline-block', padding: '18px 48px', background: 'linear-gradient(90deg, #d97706, #fbbf24, #fef9ec, #fbbf24, #d97706)', backgroundSize: '300% auto', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '16px', textDecoration: 'none', borderRadius: '14px', border: 'none', cursor: 'pointer', boxShadow: '0 12px 48px rgba(251,191,36,0.35)', animation: 'shimmer 3.2s linear infinite', letterSpacing: '0.05em', textTransform: 'uppercase' }} className="cta-shimmer">
               Get the Audit — $197
-            </motion.a>
+            </a>
           ) : (
             <div style={{ display: 'inline-block', padding: '18px 48px', background: 'rgba(251,191,36,0.2)', color: '#fbbf24', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '16px', borderRadius: '14px', textTransform: 'uppercase', opacity: 0.6 }}>
               Loading...
