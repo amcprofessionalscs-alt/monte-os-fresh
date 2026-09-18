@@ -11,17 +11,17 @@ function getStripe() {
   });
 }
 
-const TIER_PRODUCTS: Record<string, string | undefined> = {
-  audit: process.env.NEXT_PUBLIC_STRIPE_AUDIT_PRODUCT_ID,
-  lite: process.env.NEXT_PUBLIC_STRIPE_LITE_PRODUCT_ID,
-  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID,
-  partner: process.env.NEXT_PUBLIC_STRIPE_PARTNER_PRODUCT_ID,
+const TIER_PRICES: Record<string, string | undefined> = {
+  audit: process.env.NEXT_PUBLIC_STRIPE_AUDIT_PRICE_ID,
+  lite: process.env.NEXT_PUBLIC_STRIPE_LITE_PRICE_ID,
+  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+  partner: process.env.NEXT_PUBLIC_STRIPE_LICENSE_PRICE_ID,
 };
 
 export async function GET(request: NextRequest) {
   try {
     const tier = request.nextUrl.searchParams.get('tier') || '';
-    const priceId = TIER_PRODUCTS[tier];
+    const priceId = TIER_PRICES[tier];
 
     if (!priceId) {
       return NextResponse.json(
