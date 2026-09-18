@@ -1,31 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { getPaymentLink } from '@/lib/payment-links';
 
 const FONT_SYNE = 'var(--font-syne), Syne, sans-serif';
 const FONT_MONO = 'var(--font-dm-mono), DM Mono, monospace';
 
-type Tier = { name: string; price: number; description: string; terms: string; features: string[]; key: 'audit' | 'lite' | 'pro' | 'partner'; ctaLink?: string };
+type Tier = { name: string; price: number; description: string; terms: string; features: string[]; href: string };
 
 const TIERS: Tier[] = [
-  { name: 'OS Audit', price: 197, description: 'One-time audit', terms: 'One-time, 48-hr', features: ['Tool audit', 'Bottleneck map', 'Top 3 opportunities', 'Loom walkthrough'], key: 'audit' as const, ctaLink: '/book' },
-  { name: 'Operator Lite', price: 997, description: 'Monthly support', terms: 'Month-to-month', features: ['Monthly call', 'System tune-ups', 'Async questions', 'For founders'], key: 'lite' as const, ctaLink: '/book' },
-  { name: 'Operator Pro', price: 1997, description: 'Hands-on execution', terms: '3-month minimum', features: ['Weekly calls', 'Execution support', 'Systems built', 'Maintained'], key: 'pro' as const, ctaLink: '/book' },
-  { name: 'Licensed Partner', price: 2997, description: 'White-label OS', terms: 'Annual', features: ['White-label framework', 'Prompt system', 'Templates', 'Keep 100% revenue'], key: 'partner' as const, ctaLink: '/book' },
+  { name: 'OS Audit', price: 197, description: 'One-time audit', terms: 'One-time, 48-hr', features: ['Tool audit', 'Bottleneck map', 'Top 3 opportunities', 'Loom walkthrough'], href: 'https://buy.stripe.com/4gMeVdaR37Ne8NYeaZcZa01' },
+  { name: 'Operator Lite', price: 997, description: 'Monthly support', terms: 'Month-to-month', features: ['Monthly call', 'System tune-ups', 'Async questions', 'For founders'], href: 'https://buy.stripe.com/bJe6oH6AN7Ne4xI7MBcZa04' },
+  { name: 'Operator Pro', price: 1997, description: 'Hands-on execution', terms: '3-month minimum', features: ['Weekly calls', 'Execution support', 'Systems built', 'Maintained'], href: 'https://buy.stripe.com/5kQ9ATbV73wYfcmd6VcZa03' },
+  { name: 'Licensed Partner', price: 2997, description: 'White-label OS', terms: 'Annual', features: ['White-label framework', 'Prompt system', 'Templates', 'Keep 100% revenue'], href: 'https://buy.stripe.com/9B66oHf7j4B20hs7MBcZa02' },
 ];
 
 export default function PricingPage() {
-  const [links, setLinks] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    Promise.all(TIERS.map(t => getPaymentLink(t.key).then(url => ({ [t.key]: url })))).then(results => {
-      setLinks(Object.assign({}, ...results));
-    });
-  }, []);
-
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #0d0a18 40%, #0a0d1a 100%)', color: 'white', position: 'relative', overflow: 'hidden' }}>
       <style>{`
@@ -69,7 +59,7 @@ export default function PricingPage() {
               <div style={{ marginBottom: '32px' }}>
                 {tier.features.map((f, i) => <div key={i} style={{ fontFamily: FONT_MONO, fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px' }}>✓ {f}</div>)}
               </div>
-              {links[tier.key] && <a href={links[tier.key]} className="shimmer" style={{ display: 'block', width: '100%', padding: '14px 20px', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '13px', border: 'none', borderRadius: '12px', cursor: 'pointer', textDecoration: 'none', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Get Started</a>}
+              <a href={tier.href} target="_blank" rel="noopener noreferrer" className="shimmer" style={{ display: 'block', width: '100%', padding: '14px 20px', color: '#000', fontFamily: FONT_SYNE, fontWeight: 800, fontSize: '13px', border: 'none', borderRadius: '12px', cursor: 'pointer', textDecoration: 'none', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Get Started</a>
             </motion.div>
           ))}
         </div>

@@ -63,10 +63,10 @@ export async function GET() {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     const tiers = [
-      { productId: process.env.NEXT_PUBLIC_STRIPE_AUDIT_PRODUCT_ID, name: 'audit' },
-      { productId: process.env.NEXT_PUBLIC_STRIPE_LITE_PRODUCT_ID, name: 'lite' },
-      { productId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID, name: 'pro' },
-      { productId: process.env.NEXT_PUBLIC_STRIPE_PARTNER_PRODUCT_ID, name: 'partner' },
+      { productId: process.env.NEXT_PUBLIC_STRIPE_AUDIT_PRICE_ID, name: 'audit' },
+      { productId: process.env.NEXT_PUBLIC_STRIPE_LITE_PRICE_ID, name: 'lite' },
+      { productId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID, name: 'pro' },
+      { productId: process.env.NEXT_PUBLIC_STRIPE_LICENSE_PRICE_ID, name: 'partner' },
     ];
 
     const links: Record<string, string> = {};

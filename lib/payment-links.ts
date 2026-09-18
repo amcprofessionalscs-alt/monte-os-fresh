@@ -1,9 +1,9 @@
-// Mapping of tier names to their product IDs
-const TIER_PRODUCTS: Record<string, string> = {
-  audit: process.env.NEXT_PUBLIC_STRIPE_AUDIT_PRODUCT_ID || '',
-  lite: process.env.NEXT_PUBLIC_STRIPE_LITE_PRODUCT_ID || '',
-  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID || '',
-  partner: process.env.NEXT_PUBLIC_STRIPE_PARTNER_PRODUCT_ID || '',
+// Mapping of tier names to their Stripe price IDs
+const TIER_PRICES: Record<string, string> = {
+  audit: process.env.NEXT_PUBLIC_STRIPE_AUDIT_PRICE_ID || '',
+  lite: process.env.NEXT_PUBLIC_STRIPE_LITE_PRICE_ID || '',
+  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || '',
+  partner: process.env.NEXT_PUBLIC_STRIPE_LICENSE_PRICE_ID || '',
 };
 
 // Cache for payment links (in a production app, use Redis or similar)
@@ -21,7 +21,7 @@ export async function getPaymentLink(tier: 'audit' | 'lite' | 'pro' | 'partner')
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        productId: TIER_PRODUCTS[tier],
+        productId: TIER_PRICES[tier],
         tierName: tier,
       }),
     });
