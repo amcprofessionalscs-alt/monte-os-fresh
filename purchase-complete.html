@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Payment received.">
+<title>Payment received | Next Step OS</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230e1a19'/><path d='M9 17l5 5 9-12' stroke='%235fc4b9' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','5146176515409783');
+fbq('track','PageView');
+(function(){
+var amt = null, name = 'Next Step OS';
+try { var p = new URLSearchParams(window.location.search); var a = parseFloat(p.get('amt')); if (!isNaN(a) && a > 0 && a < 100000) amt = a; var n = p.get('item'); if (n) name = n.slice(0,60); } catch(e) {}
+if (amt !== null) fbq('track','Purchase',{value:amt, currency:'USD', content_name:name});
+else fbq('track','Purchase',{currency:'USD', content_name:name});
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=5146176515409783&ev=Purchase&noscript=1"></noscript>
+<style>
+@font-face { font-family: "Anton"; src: url(/fonts/anton-latin-400-normal.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Newsreader"; src: url(/fonts/newsreader-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Newsreader"; src: url(/fonts/newsreader-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+:root { --paper:#eef0ec; --ink:#131a18; --soft:#46524e; --teal:#0d6b64; color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 clamp(1.05rem, 1rem + 0.3vw, 1.2rem)/1.62 "Newsreader", Georgia, serif; }
+.wrap { max-width: 46rem; margin: 0 auto; padding: clamp(2rem, 7vh, 5rem) clamp(1.25rem, 5vw, 3rem); }
+.brand { font-family: "Anton", Impact, sans-serif; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink); text-decoration: none; }
+.brand b { color: var(--teal); font-weight: 400; }
+.label { font-family: "Anton", Impact, sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: var(--soft); margin: clamp(3rem, 10vh, 6rem) 0 0.75rem; }
+h1 { font-family: "Anton", Impact, sans-serif; font-weight: 400; text-transform: uppercase; font-size: clamp(2.6rem, 1.4rem + 5vw, 5rem); line-height: 0.95; margin: 0 0 1.5rem; text-wrap: balance; }
+ol { padding: 0; margin: 2rem 0; list-style: none; counter-reset: s; }
+ol li { counter-increment: s; display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.75rem; padding: 1rem 0; border-top: 1px solid rgb(19 26 24 / 0.14); }
+ol li::before { content: counter(s); font-family: "Anton", Impact, sans-serif; font-size: 1.9rem; line-height: 1; color: var(--teal); }
+a { color: var(--teal); text-underline-offset: 0.18em; }
+a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+.row { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem; font-weight: 600; }
+.foot { margin-top: 4rem; font-family: "Anton", Impact, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.8rem; color: var(--soft); }
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="brand" href="/">Next Step <b>OS</b></a>
+<p class="label">Paid</p>
+<h1>You're in. Let's get to work.</h1>
+<p>Payment went through and your receipt is on its way from Stripe. Check your email. The scheduling link is in there too.</p>
+<ol><li><div><strong>Before the session:</strong> think about the last week. Which three things stopped moving the moment you weren't in the room? That's where we start.</div></li><li><div><strong>The session:</strong> 60 minutes on how work actually moves through your company: how it comes in, who touches it, where it stalls.</div></li><li><div><strong>After:</strong> your Bottleneck Map, a scoreboard built on your real numbers, and a 30-day build plan. Yours to keep and run.</div></li></ol>
+<div class="row"><a href="/">Back to the site</a><a href="mailto:amcprofessionalscs@gmail.com?subject=Next%20Step%20OS%20%E2%80%94%20Just%20paid">Email me directly</a></div>
+<p class="foot">Next Step OS · Milwaukee, Wisconsin · amcprofessionalscs@gmail.com</p>
+</main>
+</body>
+</html>
