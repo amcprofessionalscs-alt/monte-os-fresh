@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nextstep-os.com/sitemap.xml
+Sitemap: https://www.nextstep-os.com/sitemap.xml
