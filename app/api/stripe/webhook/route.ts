@@ -12,10 +12,15 @@ function getStripe() {
   });
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+// Created per request, not at module load, so `next build` doesn't need the secrets.
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    throw new Error('Missing Supabase env vars (NEXT_PUBLIC_SUPABASE_URL or key)');
+  }
+  return createClient(url, key);
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -51,6 +56,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Update customer record in Supabase
+        const supabase = getSupabaseAdmin();
         const { error } = await supabase
           .from('customers')
           .update({

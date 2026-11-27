@@ -1,0 +1,32 @@
+{
+  "title": "Monte TV",
+  "columns": 2,
+  "tiles": [
+    {
+      "type": "web",
+      "title": "House Board",
+      "subtitle": "All For You AFH dashboard",
+      "glyph": "H",
+      "url": "https://claude.ai/artifact/Qu1gk39CP7nFq1cVWYocBH"
+    },
+    {
+      "type": "web",
+      "title": "Jarvis",
+      "subtitle": "Your assistant",
+      "glyph": "J",
+      "url": "https://claude.ai/artifact/UHib8dpjynEgViTBRnHrZB"
+    },
+    {
+      "type": "apps",
+      "title": "All apps",
+      "subtitle": "Netflix, YouTube and more",
+      "glyph": "A"
+    },
+    {
+      "type": "settings",
+      "title": "Settings",
+      "subtitle": "Wi-Fi, display and remote",
+      "glyph": "S"
+    }
+  ]
+}
