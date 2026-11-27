@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:paddingLeft="56dp"
+    android:paddingRight="56dp"
+    android:paddingTop="32dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/apps_title"
+        android:textColor="@color/fg"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="64dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/accent" />
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="32dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/tiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingTop="12dp" />
+    </ScrollView>
+</LinearLayout>
