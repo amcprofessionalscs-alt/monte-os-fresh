@@ -129,10 +129,10 @@ public class MainActivity extends Activity {
     /** Two rows of tiles fill the screen under the header; more rows scroll. */
     private int tileHeight() {
         int screen = getResources().getDisplayMetrics().heightPixels;
-        int chrome = TileGrid.dp(this, 32 + 120 + 24 + 12 + 32);   // padding + header + gaps
+        int chrome = TileGrid.dp(this, 32 + 104 + 24 + 12 + 32);   // padding + header + gaps
         int perRowMargins = TileGrid.dp(this, 28);
         int h = (screen - chrome) / 2 - perRowMargins;
-        return Math.max(h, TileGrid.dp(this, 160));
+        return Math.max(h, TileGrid.dp(this, 112));   // 112dp still fits badge + two lines
     }
 
     private int indexOfTile(View v) {

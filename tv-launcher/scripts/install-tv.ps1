@@ -1,3 +1,5 @@
+# Easiest on Windows: double-click install-tv.bat in this folder instead.
+#
 # Installs Monte TV on an Android TV / Google TV device over Wi-Fi and makes it the
 # home screen. Run from a Windows PC on the same Wi-Fi as the TV, in PowerShell:
 #
@@ -8,7 +10,9 @@
 # (and Wireless debugging if your TV has it).
 param([string]$TvIp = "")
 
-$ErrorActionPreference = "Stop"
+# "Continue", not "Stop": adb prints normal progress (like "daemon started") to stderr,
+# which Windows PowerShell 5.1 would otherwise treat as a fatal error.
+$ErrorActionPreference = "Continue"
 $Pkg = "com.monteos.tvhome"
 $Activity = "$Pkg/.MainActivity"
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -27,6 +31,7 @@ if (-not $Adb) {
     $Adb = Join-Path $Here "platform-tools\adb.exe"
     if (-not (Test-Path $Adb)) {
         Say "Downloading Android platform-tools (adb) from Google"
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $Zip = Join-Path $Here "platform-tools.zip"
         Invoke-WebRequest -UseBasicParsing -OutFile $Zip `
             "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
@@ -35,7 +40,7 @@ if (-not $Adb) {
     }
 }
 
-function AdbRun { & $Adb @args 2>&1 | Out-String }
+function AdbRun { (& $Adb @args 2>&1 | ForEach-Object { "$_" }) -join "`n" }
 function State($t) { (AdbRun -s $t get-state).Trim() }
 
 # --- 2. Connect over Wi-Fi ---------------------------------------------------

@@ -19,13 +19,13 @@
     {
       "type": "apps",
       "title": "All apps",
-      "subtitle": "Netflix, YouTube and everything else on this TV",
+      "subtitle": "Netflix, YouTube and more",
       "glyph": "A"
     },
     {
       "type": "settings",
       "title": "Settings",
-      "subtitle": "Wi-Fi, display, remote and accessories",
+      "subtitle": "Wi-Fi, display and remote",
       "glyph": "S"
     }
   ]
