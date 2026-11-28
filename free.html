@@ -85,6 +85,30 @@ fbq('track','PageView');
   </section>
   <footer class="night colophon" id="start"><div class="wrap"><div class="mast"><nav class="mast__nav" aria-label="Site"><a href="/">Home</a><a href="/care-homes">Care homes</a><a href="/contract-ready">Cleaning companies</a><a href="/ai-systems-milwaukee">AI systems</a><a href="/floor-audit">Floor Audit</a><a href="/free">Free toolkit</a></nav><p class="label">Next Step OS · Milwaukee, Wisconsin · @Monte_Motivated</p></div></div></footer>
 </main>
+<script>
+/* Also sends name + email to the sequence script. Does nothing until the two placeholders below are replaced
+   with the real web app URL and key, so the form keeps working exactly as before. Web3Forms still gets the submit. */
+(function () {
+  var f = document.querySelector('form[data-lead]');
+  if (!f) return;
+  var URL_ = 'REPLACE_WITH_APPS_SCRIPT_URL', KEY_ = 'REPLACE_WITH_SHARED_KEY';
+  f.addEventListener('submit', function () {
+    if (URL_.indexOf('REPLACE') === 0) return;
+    try {
+      fetch(URL_, {
+        method: 'POST', mode: 'no-cors', keepalive: true,
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          k: KEY_,
+          name: (document.getElementById('f-name') || {}).value || '',
+          email: (document.getElementById('f-email') || {}).value || '',
+          keyword: (document.getElementById('f-kw') || {}).value || ''
+        })
+      });
+    } catch (e) {}
+  });
+})();
+</script>
 <script src="/scrollcraft.js"></script>
 <script>ScrollCraft.mount(document.body);</script>
 </body>
